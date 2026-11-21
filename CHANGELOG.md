@@ -2,6 +2,17 @@
 
 ## Unreleased
 
+### Missing app-state sync-key recovery implemented (2026-11-21)
+
+The Casper-style recovery path is now implemented in the compiled package:
+
+- `requestAppStateSyncKey(keyIds)` sends an `APP_STATE_SYNC_KEY_REQUEST` peer protocol message to the authenticated primary phone.
+- The connection-open hook checks `creds.myAppStateKeyId`, requests the key only when its key material is absent, and suppresses duplicate requests during the process.
+- Failed requests are not remembered, so a later connection can retry them.
+- Missing-key errors now carry `data.isMissingKey: true` for callers that need to distinguish key recovery from other app-state failures.
+
+`keithsession2` is pinned to the resulting Git commit and its lockfile must be refreshed whenever this fork commit changes.
+
 ### App-state trace and test notes (2026-11-21)
 
 This entry records the comparison between `keithbaileys` and [Casper-Tech-ke/baileys](https://github.com/Casper-Tech-ke/baileys/blob/main/CHANGELOG.md), specifically for operations that use WhatsApp app-state patches.
@@ -124,4 +135,4 @@ Expected failure on the affected package/session:
 myAppStateKey ("<current-key-id>") not present
 ```
 
-This changelog entry documents the trace and test path only. The next implementation step is to port Casper's key-request API, connection-open resolver, missing-key classification, blocked-collection retry, and convenience wrappers into `keithbaileys`, then publish a new version for live testing.
+The key-request API, connection-open resolver, and missing-key classification are now ported. Blocked-collection retry and convenience wrappers remain separate follow-up work.
