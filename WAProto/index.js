@@ -80229,6 +80229,7 @@ $root.proto = (function() {
                  * @instance
                  */
                 CarouselMessage.prototype.messageVersion = null;
+                CarouselMessage.prototype.carouselCardType = null;
 
                 // OneOf field names bound to virtual getters and setters
                 var $oneOfFields;
@@ -80236,6 +80237,10 @@ $root.proto = (function() {
                 // Virtual OneOf for proto3 optional field
                 Object.defineProperty(CarouselMessage.prototype, "_messageVersion", {
                     get: $util.oneOfGetter($oneOfFields = ["messageVersion"]),
+                    set: $util.oneOfSetter($oneOfFields)
+                });
+                Object.defineProperty(CarouselMessage.prototype, "_carouselCardType", {
+                    get: $util.oneOfGetter($oneOfFields = ["carouselCardType"]),
                     set: $util.oneOfSetter($oneOfFields)
                 });
 
@@ -80268,6 +80273,8 @@ $root.proto = (function() {
                             $root.proto.Message.InteractiveMessage.encode(message.cards[i], writer.uint32(/* id 1, wireType 2 =*/10).fork()).ldelim();
                     if (message.messageVersion != null && Object.hasOwnProperty.call(message, "messageVersion"))
                         writer.uint32(/* id 2, wireType 0 =*/16).int32(message.messageVersion);
+                    if (message.carouselCardType != null && Object.hasOwnProperty.call(message, "carouselCardType"))
+                        writer.uint32(/* id 3, wireType 0 =*/24).int32(message.carouselCardType);
                     return writer;
                 };
 
@@ -80310,6 +80317,10 @@ $root.proto = (function() {
                             }
                         case 2: {
                                 message.messageVersion = reader.int32();
+                                break;
+                            }
+                        case 3: {
+                                message.carouselCardType = reader.int32();
                                 break;
                             }
                         default:
@@ -80362,6 +80373,11 @@ $root.proto = (function() {
                         if (!$util.isInteger(message.messageVersion))
                             return "messageVersion: integer expected";
                     }
+                    if (message.carouselCardType != null && message.hasOwnProperty("carouselCardType")) {
+                        properties._carouselCardType = 1;
+                        if (!$util.isInteger(message.carouselCardType))
+                            return "carouselCardType: integer expected";
+                    }
                     return null;
                 };
 
@@ -80389,6 +80405,16 @@ $root.proto = (function() {
                     }
                     if (object.messageVersion != null)
                         message.messageVersion = object.messageVersion | 0;
+                    if (object.carouselCardType != null) {
+                        if (typeof object.carouselCardType === "string") {
+                            switch (object.carouselCardType) {
+                                case "UNKNOWN": object.carouselCardType = 0; break;
+                                case "HSCROLL_CARDS": object.carouselCardType = 1; break;
+                                case "ALBUM_IMAGE": object.carouselCardType = 2; break;
+                            }
+                        }
+                        message.carouselCardType = object.carouselCardType | 0;
+                    }
                     return message;
                 };
 
@@ -80416,6 +80442,11 @@ $root.proto = (function() {
                         object.messageVersion = message.messageVersion;
                         if (options.oneofs)
                             object._messageVersion = "messageVersion";
+                    }
+                    if (message.carouselCardType != null && message.hasOwnProperty("carouselCardType")) {
+                        object.carouselCardType = options.enums === String ? ["UNKNOWN", "HSCROLL_CARDS", "ALBUM_IMAGE"][message.carouselCardType] || message.carouselCardType : message.carouselCardType;
+                        if (options.oneofs)
+                            object._carouselCardType = "carouselCardType";
                     }
                     return object;
                 };
@@ -80446,6 +80477,11 @@ $root.proto = (function() {
                     return typeUrlPrefix + "/proto.Message.InteractiveMessage.CarouselMessage";
                 };
 
+                CarouselMessage.CarouselCardType = {
+                    UNKNOWN: 0,
+                    HSCROLL_CARDS: 1,
+                    ALBUM_IMAGE: 2
+                };
                 return CarouselMessage;
             })();
 
