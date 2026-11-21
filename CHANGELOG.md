@@ -13,6 +13,44 @@ The Casper-style recovery path is now implemented in the compiled package:
 
 `keithsession2` is pinned to the resulting Git commit and its lockfile must be refreshed whenever this fork commit changes.
 
+#### Example: export the current app-state key
+
+Casper's multi-file auth state does not use a special built-in `AppState.json` file. It stores app-state keys in the auth key store. The following diagnostic helper creates an explicit JSON snapshot without changing the normal auth files:
+
+```js
+const fs = require('fs/promises')
+const path = require('path')
+const { BufferJSON } = require('keithbaileys')
+
+async function exportAppState(authFolder, state) {
+  const keyId = state.creds.myAppStateKeyId
+  const keys = keyId
+    ? await state.keys.get('app-state-sync-key', [keyId])
+    : {}
+
+  const snapshot = {
+    exportedAt: new Date().toISOString(),
+    myAppStateKeyId: keyId || null,
+    appStateSyncKey: keyId ? (keys[keyId] || null) : null
+  }
+
+  await fs.writeFile(
+    path.join(authFolder, 'AppState.json'),
+    JSON.stringify(snapshot, BufferJSON.replacer, 2)
+  )
+}
+
+const { state, saveCreds } = await useMultiFileAuthState('./auth_info')
+sock.ev.on('creds.update', saveCreds)
+sock.ev.on('connection.update', async ({ connection }) => {
+  if (connection === 'open') {
+    await exportAppState('./auth_info', state)
+  }
+})
+```
+
+This file is a diagnostic snapshot, not a replacement for the complete multi-file auth directory. Keep the whole auth directory, including `app-state-sync-key-*` files, when transferring a session.
+
 ### App-state trace and test notes (2026-11-21)
 
 This entry records the comparison between `keithbaileys` and [Casper-Tech-ke/baileys](https://github.com/Casper-Tech-ke/baileys/blob/main/CHANGELOG.md), specifically for operations that use WhatsApp app-state patches.
