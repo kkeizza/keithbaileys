@@ -13,6 +13,10 @@ The Casper-style recovery path is now implemented in the compiled package:
 
 `keithsession2` is pinned to the resulting Git commit and its lockfile must be refreshed whenever this fork commit changes.
 
+### Casper-compatible clearChat patch (2026-11-21)
+
+The clear-chat implementation now matches Casper's `chatModificationToAppPatch()` and `clearChat()` behavior. The generated `clearChatAction` includes `messageRange`, the patch index honors `deleteStarred`, and the socket exposes `clearChat(jid, lastMessages, options)`. Pass the latest message (or a valid message range) when clearing a conversation; `chatModify({ clear: true }, jid)` without `lastMessages` is not the Casper-compatible path.
+
 #### Example: export the current app-state key
 
 Casper's multi-file auth state does not use a special built-in `AppState.json` file. It stores app-state keys in the auth key store. The following diagnostic helper creates an explicit JSON snapshot without changing the normal auth files:
